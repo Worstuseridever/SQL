@@ -14,3 +14,8 @@ insert into gamers values (12, "King's Quest IV", 10, 9, "Sierra");
 insert into gamers values (13, "King's Quest I", 5, 7, "Sierra");
 insert into gamers values (14, "Myst", 15, 8, "Cyan Worlds Inc");
 insert into gamers values (15, "South Park The Stick of Truth", 45, 9, "Ubisoft");
+
+Select * From Gamers;
+Select * From gamers where rating >= 8 order by rating;
+Select SUM(price) from gamers;
+Select * From gamers where brand = "2K Games" order by price;
