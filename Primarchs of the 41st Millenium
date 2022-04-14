@@ -1,0 +1,107 @@
+ /* Create table about the people and what they do here */
+
+CREATE TABLE primarchs (
+   id INTEGER PRIMARY KEY,
+   name TEXT,
+   legion_name TEXT,
+   world TEXT,
+   legion_id INTEGER);
+   
+   
+  INSERT INTO primarchs VALUES (1, 'lion_el_jonson', 'dark angels', 'caliban', 1);
+  INSERT INTO primarchs VALUES (2, NULL, NULL, NULL, 2);
+  INSERT INTO primarchs VALUES (3, 'fulgrim', 'emporers_children', 'chemos', 3);
+  INSERT INTO primarchs VALUES (4, 'Perturabo', 'iron_warriors', 'olympia', 4);
+  INSERT INTO primarchs VALUES (5, 'jaghatai_kahn', 'white_scars', 'mundas_planus', 5);
+  INSERT INTO primarchs VALUES (6, 'leman_russ', 'space_wolves', 'fenris', 6);
+  INSERT INTO primarchs VALUES (7, 'rogal_dorn', 'imperial_fists', 'inwit', 7);
+  INSERT INTO primarchs VALUES (8, 'konrad_curze', 'nights_lords', 'nostramos', 8);
+  INSERT INTO primarchs VALUES (9, 'sanguinius', 'blood_angels', 'baal', 9);
+  INSERT INTO primarchs VALUES (10, 'ferrus_manus', 'iron_hands', 'medusa', 10);
+  INSERT INTO primarchs VALUES (11, NULL, NULL, NULL, 11);
+  INSERT INTO primarchs VALUES (12, 'angron', 'worlds_eaters', 'nuceria', 12);
+  INSERT INTO primarchs VALUES (13, 'roboute_guilliman', 'ultramarines', 'macragge', 13);
+  INSERT INTO primarchs VALUES (14, 'mortarion', 'death_guard', 'barbarus', 14);
+  INSERT INTO primarchs VALUES (15, 'magnus_the_red', 'thousand_sons', 'prospero', 15);
+  INSERT INTO primarchs VALUES (16, 'horus', 'luna_wolves', 'cthonia', 16);
+  INSERT INTO primarchs VALUES (17, 'lorgar', 'word_bearers', 'colchis', 17);
+  INSERT INTO primarchs VALUES (18, 'vulkan', 'salamanders', 'nocturne', 18);
+  INSERT INTO primarchs VALUES (19, 'corvus_corax', 'raven_guard', 'deliverance', 19);
+  INSERT INTO primarchs VALUES (20, 'alpharius_omegon', 'alpha_legion', NULL, 20);
+  
+  CREATE TABLE alignment (
+    id INTEGER PRIMARY KEY,
+    faction TEXT,
+    god TEXT);
+    
+    INSERT INTO alignment VALUES (1, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (2, NULL, NULL);
+    INSERT INTO alignment VALUES (3, 'traitor','slaanesh');
+    INSERT INTO alignment VALUES (4, 'traitor', 'chaos');
+    INSERT INTO alignment VALUES (5, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (6, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (7, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (8, 'traitor', 'chaos');
+    INSERT INTO alignment VALUES (9, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (10, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (11, NULL, NULL);
+    INSERT INTO alignment VALUES (12, 'traitor', 'khorne');
+    INSERT INTO alignment VALUES (13, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (14, 'traitor', 'nurgle');
+    INSERT INTO alignment VALUES (15, 'traitor', 'tzeentch');
+    INSERT INTO alignment VALUES (16, 'traitor', 'chaos');
+    INSERT INTO alignment VALUES (17, 'traitor', 'chaos');
+    INSERT INTO alignment VALUES (18, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (19, 'loyal', 'emporer');
+    INSERT INTO alignment VALUES (20, 'traitor', 'chaos');
+    
+    
+CREATE TABLE battles (
+    id INTEGER PRIMARY KEY,
+    won INTEGER,
+    lost INTEGER);
+    
+    
+   INSERT INTO battles VALUES (1, 11545, 2);
+   INSERT INTO battles VALUES (2, NULL, 1);
+   INSERT INTO battles VALUES (3, 125774, 4);
+   INSERT INTO battles VALUES (4, 12232, 1);
+   INSERT INTO battles VALUES (5, 23455, 6);
+   INSERT INTO battles VALUES (6, 32111, 0);
+   INSERT INTO battles VALUES (7, 125454, 8);
+   INSERT INTO battles VALUES (8, 45999, 3);
+   INSERT INTO battles VALUES (9, 65333, 12);
+   INSERT INTO battles VALUES (10, 53433, 2);
+   INSERT INTO battles VALUES (11, NULL, 1);
+   INSERT INTO battles VALUES (12, 123213, 7);
+   INSERT INTO battles VALUES (13, 234562, 8);
+   INSERT INTO battles VALUES (14, 777777, 7);
+   INSERT INTO battles VALUES (15, 2351234, 10);
+   INSERT INTO battles VALUES (16, 2352221, 4);
+   INSERT INTO battles VALUES (17, 2345251, 5);
+   INSERT INTO battles VALUES (18, 13411511, 3);
+   INSERT INTO battles VALUES (19, 3414111, 11);
+   INSERT INTO battles VALUES (20, 141245135, NULL);
+   
+  
+   SELECT legion_name, won, lost FROM primarchs
+   JOIN battles
+   ON primarchs.id = battles.id
+   WHERE won NOT NULL
+   ORDER BY won DESC;
+   
+   SELECT name, faction, god
+   FROM primarchs
+   JOIN alignment
+   ON primarchs.id = alignment.id
+   WHERE name NOT NULL
+   ORDER BY faction, god;
+   
+   SELECT world, god, won
+   FROM primarchs
+   JOIN alignment
+   ON primarchs.id = alignment.id
+   JOIN battles
+   ON primarchs.id = battles.id
+   WHERE world NOT NULL
+   ORDER BY won DESC
