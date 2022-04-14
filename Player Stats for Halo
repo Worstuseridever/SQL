@@ -1,0 +1,32 @@
+/* What does the app's SQL look like? */
+
+CREATE TABLE halo (
+    id INTEGER PRIMARY KEY,
+    total_score INTEGER,
+    badges_earned INTEGER,
+    rank INTEGER,
+    difficulty TEXT);
+    
+    
+    INSERT INTO halo VALUES (1, 2500, 15, 25, 'easy')
+;
+    INSERT INTO halo VALUES (2, 5000, 25, 50, 'hard');
+    INSERT INTO halo VALUES (3, 4000, 30, 38, 'legendary');
+    INSERT INTO halo VALUES (4, 6800, 60, 75, 'normal');
+    INSERT INTO halo VALUES (5, 10000, 88, 69, 'legendary');
+    
+    
+    ALTER TABLE halo ADD player TEXT;
+    
+    UPDATE halo SET player = 'sleazy_e' WHERE id = 1;
+    UPDATE halo SET player = 'like_tnt' WHERE id = 2;
+    UPDATE halo SET player = 'lunchbox' WHERE id = 3;
+    UPDATE halo SET player = 'beastech' WHERE id = 4;
+    UPDATE halo SET player = 'djtommyc' WHERE id = 5;
+    
+    SELECT * FROM halo;
+    
+    DELETE FROM halo WHERE id = 5;
+    
+    
+    SELECT * FROM halo;
