@@ -1,0 +1,16 @@
+Create table GAMERS (id integer primary key, name text, price integer, rating integer, brand text);
+insert into gamers values (1, "Skyrim", 50, 10, "Bethesda");
+insert into gamers values (2, "Doom", 45, 7, "ID");
+insert into gamers values (3, "CIV VI", 60, 9, "2K Games");
+insert into gamers values (4, "Apex legends", 0, 8, "EA");
+insert into gamers values (5, "BioShock", 20, 9, "2K Games");
+insert into gamers values (6, "BioShock II", 40, 9, "2K Games");
+insert into gamers values (7, "Deus Ex", 10, 10, "Sqaure Enix");
+insert into gamers values (8, "Elder Scrolls: Morrowind", 15, 9, "Bethesda");
+insert into gamers values (9, "Dragon Age: Origins", 20, 7, "EA");
+insert into gamers values (10, "Fallout 4", 45, 8, "Bethesda");
+insert into gamers values (11, "Final Fantasy VII", 35, 10, "Square Enix");
+insert into gamers values (12, "King's Quest IV", 10, 9, "Sierra");
+insert into gamers values (13, "King's Quest I", 5, 7, "Sierra");
+insert into gamers values (14, "Myst", 15, 8, "Cyan Worlds Inc");
+insert into gamers values (15, "South Park The Stick of Truth", 45, 9, "Ubisoft");
