@@ -55,3 +55,12 @@ JOIN BIT_DB.customers AS c
  WHERE f.quantity >2
 
  ORDER BY avg_spend DESC;
+
+
+
+-- List all the products sold in Los Angeles in February, and include how many of each were sold.
+
+SELECT SUM(quantity), product
+FROM BIT_DB.Febsales
+WHERE location LIKE '%Los Angeles%'
+GROUP BY product;
