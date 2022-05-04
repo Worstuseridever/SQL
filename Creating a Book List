@@ -1,5 +1,0 @@
-create table books (id integer primary key, name text, rating integer);
-insert into books values (1, "The Hobbit", 9);
-insert into books values (2, "The Fellowship of the Ring", 8);
-insert into books values (3, "The Two Towers", 8);
-insert into books values (4, "The Return of the King", 9);
