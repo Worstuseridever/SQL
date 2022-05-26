@@ -1,0 +1,14 @@
+
+SELECT 
+CASE
+WHEN grade < 8 THEN 'NULL'
+Else name
+END
+, grade
+, marks
+FROM 
+students
+JOIN grades
+ON students.marks >= grades.Min_mark
+AND students.marks <= grades.max_mark
+ORDER BY grade DESC, name ASC;
