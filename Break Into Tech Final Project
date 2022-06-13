@@ -1,0 +1,127 @@
+-- Show Customers (their full names, customer ID, and country) who are not in the US. (Hint: != or <> can be used to say "is not equal to").
+
+SELECT chinook.customers.firstname, chinook.customers.lastname, 
+    chinook.customers.customerid, 
+    chinook.customers.country
+FROM chinook.customers
+WHERE chinook.customers.country <> 'USA';
+
+--Show only the Customers from Brazil.
+
+SELECT chinook.customers.firstname, chinook.customers.lastname, 
+    chinook.customers.customerid, 
+    chinook.customers.country
+FROM chinook.customers
+WHERE chinook.customers.country = 'Brazil'
+
+-- Find the Invoices of customers who are from Brazil. The resulting table should show the customer's full name, Invoice ID, Date of the invoice, and billing country.
+
+SELECT chinook.customers.firstname, chinook.customers.lastname, 
+    chinook.invoices.invoiceid, 
+    chinook.invoices.invoicedate,
+    chinook.invoices.billingcountry
+FROM chinook.customers
+JOIN chinook.invoices
+ON chinook.customers.customerid = chinook.invoices.customerid
+WHERE chinook.customers.country = 'Brazil'
+
+
+-- Show the Employees who are Sales Agents.
+
+SELECT * FROM chinook.employees
+WHERE title = 'Sales Support Agent';
+
+-- Find a unique/distinct list of billing countries from the Invoice table.
+
+SELECT DISTINCT(chinook.invoices.billingcountry) 
+FROM chinook.invoices
+ORDER BY billingcountry;
+
+-- Provide a query that shows the invoices associated with each sales agent. The resulting table should include the Sales Agent's full name.
+
+SELECT chinook.employees.firstname,
+    chinook.employees.lastname,
+    chinook.invoices.invoiceid
+FROM chinook.employees
+JOIN chinook.customers
+ON chinook.employees.employeeid = chinook.customers.supportrepid
+JOIN chinook.invoices 
+ON chinook.customers.customerid = chinook.invoices.customerid
+
+-- Show the Invoice Total, Customer name, Country, and Sales Agent name for all invoices and customers.
+
+SELECT chinook.employees.firstname AS Agent_First,
+    chinook.employees.lastname AS Agent_Last,
+    chinook.invoices.invoiceid AS Invoice_ID,
+    chinook.invoices.total AS Invoice_Total,
+    chinook.customers.firstname AS Cust_First,
+    chinook.customers.lastname AS Cust_Last,
+    chinook.customers.country AS Country
+FROM chinook.employees
+JOIN chinook.customers
+ON chinook.employees.employeeid = chinook.customers.supportrepid
+JOIN chinook.invoices 
+ON chinook.customers.customerid = chinook.invoices.customerid
+ORDER BY Agent_First;
+
+-- How many Invoices were there in 2009?
+
+SELECT COUNT(*) AS Total_2009_Invoices
+FROM chinook.invoices
+WHERE invoicedate LIKE '2009%';
+
+-- What are the total sales for 2009?
+
+SELECT ROUND(SUM(total),2) AS Total_2009_Sales
+FROM chinook.invoices
+WHERE invoicedate LIKE '2009%';
+
+-- Write a query that includes the purchased track name with each invoice line item.
+
+SELECT chinook.invoice_items.invoicelineid,
+    chinook.tracks.name
+FROM chinook.invoice_items
+JOIN chinook.tracks
+ON chinook.invoice_items.trackid = chinook.tracks.trackid;
+
+-- Write a query that includes the purchased track name AND artist name with each invoice line item.
+
+SELECT chinook.invoice_items.invoicelineid AS Line_Item,
+    chinook.tracks.name AS Track,
+    chinook.artists.name AS Artist
+FROM chinook.invoice_items
+JOIN chinook.tracks
+ON chinook.invoice_items.trackid = chinook.tracks.trackid
+JOIN chinook.albums
+ON chinook.tracks.albumid = chinook.albums.albumid
+JOIN chinook.artists
+ON chinook.albums.artistid = chinook.artists.artistid
+;
+
+-- Provide a query that shows all the Tracks, and include the Album name, Media type, and Genre.
+
+SELECT chinook.tracks.name AS Track,
+    chinook.albums.title AS Album_title,
+    chinook.media_types.name AS Media_type,
+    chinook.genres.name AS Genre
+FROM chinook.tracks
+JOIN chinook.albums
+ON chinook.tracks.albumid = chinook.albums.albumid
+JOIN chinook.media_types
+ON chinook.tracks.mediatypeid = chinook.media_types.mediatypeid
+JOIN chinook.genres
+ON chinook.tracks.genreid = chinook.genres.genreid
+ORDER BY album_title
+;
+
+-- Show the total sales made by each sales agent.
+
+
+
+
+
+
+
+
+-- Which sales agent made the most in sales in 2009?
+
