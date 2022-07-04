@@ -1,0 +1,13 @@
+
+SELECT submissions.hacker_id, hackers.name
+FROM submissions
+INNER JOIN challenges
+ON submissions.challenge_id = challenges.challenge_id
+INNER JOIN difficulty
+ON submissions.score = difficulty.score
+INNER JOIN hackers
+ON submissions.hacker_id = hackers.hacker_id
+WHERE difficulty.difficulty_level = challenges.difficulty_level
+GROUP BY submissions.hacker_id, hackers.name
+HAVING COUNT(submissions.hacker_id) >= 2 
+ORDER BY COUNT(submissions.hacker_id) DESC, submissions.hacker_id ASC
