@@ -1,0 +1,222 @@
+Context
+Danny seriously loves Japanese food so in the beginning of 2021, he decides to embark upon a risky venture and opens up a cute little restaurant that sells his 3 favourite foods: sushi, curry and ramen.
+
+Danny’s Diner is in need of your assistance to help the restaurant stay afloat - the restaurant has captured some very basic data from their few months of operation but have no idea how to use their data to help them run the business.
+
+Problem Statement
+Danny wants to use the data to answer a few simple questions about his customers, especially about their visiting patterns, how much money they’ve spent and also which menu items are their favourite. Having this deeper connection with his customers will help him deliver a better and more personalised experience for his loyal customers.
+
+He plans on using these insights to help him decide whether he should expand the existing customer loyalty program - additionally he needs help to generate some basic datasets so his team can easily inspect the data without needing to use SQL.
+
+Example Datasets
+Danny has provided you with a sample of his overall customer data due to privacy issues - but he hopes that these examples are enough for you to write fully functioning SQL queries to help him answer his questions!
+
+Danny has shared with you 3 key datasets for this case study:
+
+sales
+menu
+members
+
+
+
+
+Each of the following case study questions can be answered using a single SQL statement:
+
+What is the total amount each customer spent at the restaurant?
+WITH total_spent_per_items AS (
+
+SELECT s.customer_id AS customer, 
+       COUNT(s.product_id) * m.price AS total_per_item
+ FROM dannys_diner.sales AS s
+INNER JOIN dannys_diner.menu AS m
+      ON s.product_id = m.product_id
+ GROUP BY s.customer_id, m.price
+ ORDER BY s.customer_id
+)
+
+SELECT customer, 
+       SUM(total_per_item) AS total_spent
+FROM total_spent_per_items
+GROUP BY customer
+ORDER BY 2 DESC
+;
+How many days has each customer visited the restaurant?
+SELECT customer_id, 
+          COUNT(DISTINCT order_date) AS number_of_visits
+   FROM dannys_diner.sales
+   GROUP BY customer_id
+   ORDER BY customer_id
+   ;
+What was the first item from the menu purchased by each customer?
+WITH ranked_orders AS (
+   SELECT customer_id AS customer, 
+          order_date,
+          product_name AS menu_item,
+          RANK() OVER (PARTITION BY customer_id ORDER BY order_date) AS ranked
+   FROM dannys_diner.sales AS s
+   INNER JOIN dannys_diner.menu AS m
+   ON s.product_id = m.product_id
+   )
+    
+SELECT DISTINCT customer, menu_item
+FROM ranked_orders
+WHERE ranked = 1
+;
+What is the most purchased item on the menu and how many times was it purchased by all customers?
+SELECT  m.product_name AS name,
+      s.product_id AS id,
+      COUNT(s.product_id) AS total_orders
+  FROM dannys_diner.sales AS s
+    INNER JOIN dannys_diner.menu AS m
+    ON s.product_id = m.product_id
+GROUP BY m.product_name, s.product_id
+ORDER BY COUNT(s.product_id) DESC
+LIMIT 1
+;
+Which item was the most popular for each customer?
+ WITH favorite AS (SELECT 
+    s.customer_id AS customer,
+    s.product_id,
+    COUNT(s.product_id) AS total_ordered,
+    m.product_name AS item,
+    RANK() OVER (PARTITION BY customer_id ORDER BY COUNT(s.product_id) DESC) AS rnk
+  FROM dannys_diner.sales AS s
+  INNER JOIN dannys_diner.menu AS m
+  ON s.product_id = m.product_id
+  GROUP BY s.customer_id, s.product_id, m.product_name
+  ORDER BY s.customer_id, COUNT(s.product_id) DESC
+  )
+  
+  SELECT customer,
+        item,
+        total_ordered
+  FROM favorite
+  WHERE rnk = 1
+  ;
+Which item was purchased first by the customer after they became a member?
+WITH first_order_after_join AS (
+SELECT s.customer_id AS customer,
+      me.product_name AS product,
+      s.order_date AS orderdate,
+      RANK() OVER (PARTITION BY s.customer_id ORDER BY order_date) AS rnk
+FROM dannys_diner.members AS m
+INNER JOIN dannys_diner.sales AS s
+ON m.customer_id = s.customer_id
+INNER JOIN dannys_diner.menu AS me
+ON s.product_id = me.product_id
+WHERE s.order_date >= m.join_date
+)
+
+SELECT customer,
+      orderdate,
+      product
+FROM first_order_after_join
+WHERE rnk = 1
+;
+Which item was purchased just before the customer became a member?
+WITH order_before_join AS (
+SELECT s.customer_id AS customer,
+      me.product_name AS product,
+      s.order_date AS orderdate,
+      RANK() OVER (PARTITION BY s.customer_id ORDER BY order_date DESC) AS rnk
+FROM dannys_diner.members AS m
+INNER JOIN dannys_diner.sales AS s
+ON m.customer_id = s.customer_id
+INNER JOIN dannys_diner.menu AS me
+ON s.product_id = me.product_id
+WHERE s.order_date < m.join_date
+)
+
+SELECT customer,
+      orderdate,
+      product
+FROM order_before_join
+WHERE rnk = 1
+;
+What is the total items and amount spent for each member before they became a member?
+SELECT s.customer_id,
+      COUNT(DISTINCT me.product_name) AS unique_items_ordered,
+      SUM(me.price) AS total_spent
+FROM dannys_diner.members AS m
+INNER JOIN dannys_diner.sales AS s
+  ON m.customer_id = s.customer_id
+INNER JOIN dannys_diner.menu AS me
+  ON s.product_id = me.product_id
+WHERE s.order_date < m.join_date
+GROUP BY s.customer_id
+;
+If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
+SELECT 
+    s.customer_id AS customer,
+    SUM (
+      CASE
+        WHEN me.product_id IN (2,3) THEN 10 * me.price
+        WHEN me.product_id = 1 THEN 2 * 10 * me.price
+      END
+        ) AS points
+FROM  dannys_diner.sales AS s
+INNER JOIN dannys_diner.menu AS me
+  ON s.product_id = me.product_id
+GROUP BY customer
+ORDER BY points DESC
+;
+In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
+SELECT 
+    s.customer_id AS customer,
+    SUM(
+      CASE 
+        WHEN order_date BETWEEN join_date AND join_date::DATE + 6 THEN menu.price * 2 * 10
+        WHEN order_date < join_date AND menu.product_name != 'sushi' THEN menu.price * 10
+        WHEN order_date > join_date::DATE + 6 AND  menu.product_name != 'sushi' THEN menu.price * 10
+        WHEN order_date < join_date AND menu.product_name = 'sushi' THEN menu.price * 10 *2
+        WHEN order_date > join_date::DATE + 6 AND menu.product_name = 'sushi' THEN menu.price * 10 *2
+      END) AS total_points
+FROM  dannys_diner.sales AS s
+INNER JOIN dannys_diner.menu AS menu
+  ON s.product_id = menu.product_id
+INNER JOIN dannys_diner.members AS mem
+  ON s.customer_id = mem.customer_id
+WHERE s.order_date BETWEEN '2021-01-01' AND '2021-01-31'
+GROUP BY customer
+ORDER BY total_points DESC
+;
+Create a table to show customer, order date, item name, price, and whether the customer was a club member or not for each order.
+SELECT 
+    s.customer_id,
+    s.order_date,
+    menu.product_name,
+    menu.price,
+    CASE
+      WHEN s.order_date < mem.join_date THEN 'N'
+      WHEN s.order_date >= mem.join_date THEN 'Y'
+      ELSE 'N'
+    END AS member   
+FROM  dannys_diner.sales AS s
+INNER JOIN dannys_diner.menu AS menu
+  ON s.product_id = menu.product_id
+LEFT JOIN dannys_diner.members AS mem
+  ON s.customer_id = mem.customer_id
+ORDER BY s.customer_id, s.order_date
+;
+Danny also requires further information about the ranking of customer products, but he purposely does not need the ranking for non-member purchases so he expects null ranking values for the records when customers are not yet part of the loyalty program.
+SELECT 
+  s.customer_id,
+  s.order_date,
+  menu.product_name,
+  menu.price,
+    CASE
+      WHEN s.order_date < mem.join_date THEN 'N'
+      WHEN s.order_date >= mem.join_date THEN 'Y'
+      ELSE 'N'
+    END AS member,
+    CASE 
+      WHEN s.order_date >= mem.join_date THEN RANK() OVER (PARTITION BY s.customer_id, s.order_date >= mem.join_date ORDER BY s.order_date )  
+    END
+    
+FROM  dannys_diner.sales AS s
+INNER JOIN dannys_diner.menu AS menu
+  ON s.product_id = menu.product_id
+LEFT JOIN dannys_diner.members AS mem
+  ON s.customer_id = mem.customer_id
+ORDER BY s.customer_id, s.order_date
+;
